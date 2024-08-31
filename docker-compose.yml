@@ -1,0 +1,52 @@
+version: "3.8"
+
+services:
+
+  php:
+    container_name: crm_php
+    build:
+      context: .
+      target: php
+    working_dir: /var/www
+    volumes:
+    - ./:/var/www
+    depends_on:
+      - database
+      # - redis
+    ports:
+      - 8000:8000
+
+  database:
+    container_name: crm_db
+    image: mysql:8.4
+    ports:
+      - 3306:3306
+    environment:
+      - MYSQL_DATABASE=${DB_DATABASE}
+      - MYSQL_USER=${DB_USERNAME}
+      - MYSQL_PASSWORD=${DB_PASSWORD}
+      - MYSQL_ROOT_PASSWORD=rootpassword
+    volumes:
+      - ./db-data:/var/lib/mysql
+
+  # redis: 
+  #   container_name: crm_redis
+  #   image: redis:alpine
+  #   command: redis-server --appendonly yes --requirepass "${REDIS_PASSWORD}"
+  #   ports:
+  #     - 6379:6379
+
+  # node:
+  #   container_name: crm_node
+  #   build: 
+  #     context: .
+  #     target: node
+  #   volumes:
+  #     - .:/usr/src
+  #     - ./node_modules:/usr/src/node_modules
+  #   depends_on:
+  #     - php
+  #   ports:
+  #     - 3000:3000
+  #     # - 5173:5173
+  #   tty: true
